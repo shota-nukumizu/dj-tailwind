@@ -4,7 +4,9 @@ from django.views.decorators.http import require_http_methods
 from .models import Todo
 
 def todos(request):
-    return render(request, 'todos.html')
+    todos = Todo.objects.all()
+
+    return render(request, 'todos.html', {'todos': todos})
 
 @require_http_methods(['POST'])
 def add_todo(request):
