@@ -13,7 +13,12 @@
     </nav>
 
     <div class="w-4/5 my-6 mx-auto p-2 lg:p-10 bg-white rounded-xl">
-        <form class="flex mb-6 space-x-4">
+        <form
+            class="flex mb-6 space-x-4"
+            hx-post="/add-todo/"
+            hx-target="#todos"
+            hx-swaps="afterend"
+        >
             <input type="text" name="title" class="title flex-1 px-4 py-3 bg-gray-200 rounded-xl"
                 placeholder="The Title">
 
@@ -36,5 +41,10 @@
 </body>
 
 <script src="https://cdn.tailwindcss.com"></script>
-
+<script src="https://unpkg.com/htmx.org@1.6.1"></script>
+<script>
+    document.body.addEventListener('htmx:configRequest', (event) => {
+        event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}'
+    })
+</script>
 </html>
