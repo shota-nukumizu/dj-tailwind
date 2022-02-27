@@ -14,6 +14,54 @@ DjangoとTailwind CSSで開発したSPA。構造は非常にシンプル。
 
 ![](demo2.png)
 
+
+# 環境構築
+
+まずは以下のコマンドを入力してDjangoのプロジェクトを出力させる。
+
+```
+pip install django
+django-admin startproject backend .
+django-admin startapp todo
+```
+
+`backend/settings.py`の定数`INSTALLED_APPS`に`todo`を追加。
+
+```py
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'todo',
+]
+```
+
+ディレクトリ構造をはっきりさせるため、定数`TEMPLATES`のディレクトリにあるキー`'DIRS'`の値に`BASE_DIR / 'templates'`と書く。
+
+この際、`templates`フォルダを新しく作成する。
+
+
+```py
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [BASE_DIR / 'templates'], #追加
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
+```
+
 # 開発環境
 
 * Django 4.0
