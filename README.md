@@ -62,6 +62,26 @@ TEMPLATES = [
 ]
 ```
 
+# データベース作成
+
+`todo/models.py`
+
+```py
+from django.db import models
+
+class Todo(models.Model):
+    title = models.CharField(max_length=100)　# タイトル：タスクの名前
+    is_done = models.BooleanField(default=False) # 終了したかどうかの確認。二択になるのでTrueとFalseで表現する。
+```
+
+以下のコマンドを入力してデータベースを作成する。デフォルトは`db.sqlite3`。
+
+```powershell
+py manage.py makemigrations
+py manage.py migrate
+py manage.py createsuperuser #管理サイトにアクセスするためのusernameとpasswordを指定する
+```
+
 # 開発環境
 
 * Django 4.0
