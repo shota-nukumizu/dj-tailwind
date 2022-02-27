@@ -171,6 +171,90 @@ document.body.addEventListener('htmx:afterRequest', (event) => {
 })
 ```
 
+# `View`設定
+
+データベースの処理を行うための`View`を簡潔に記述する。
+
+`todo/views.py`
+
+```py
+# 必要なライブラリをインポート
+from django.http.response import HttpResponse
+from django.shortcuts import render
+from django.views.decorators.http import require_http_methods
+
+from .models import Todo
+
+# リスト表示
+def todos(request):
+    todos = Todo.objects.all()
+
+    return render(request, 'todos.html', {'todos': todos})
+
+# タスクを新規作成する
+@require_http_methods(['POST'])
+def add_todo(request):
+    todo = None
+    title = request.POST.get('title', '')
+
+    if title:
+        todo = Todo.objects.create(title=title)
+    
+    return render(request, 'partials/todo.html', {'todo': todo})
+
+# タスク完了ボタンの設置
+@require_http_methods(['PUT'])
+def update_todo(request, pk):
+    todo = Todo.objects.get(pk=pk)
+    todo.is_done = True
+    todo.save()
+
+    return render(request, 'partials/todo.html', {'todo': todo})
+
+# タスク削除の処理
+@require_http_methods(['DELETE'])
+def delete_todo(request, pk):
+    todo = Todo.objects.get(pk=pk)
+    todo.delete()
+
+    return HttpResponse()
+```
+
+タスクに関する処理はアノテーションを使う。(**プロジェクトをSPA化するためには、HTTPメソッドで操作を行えるようにするため**)
+
+```py
+@require_http_methods(['POST']) #これを必ずつける。忘れるとHTTPリクエスト単位で処理を実行できない。
+def add_todo(request):
+    todo = None
+    title = request.POST.get('title', '')
+
+    if title:
+        todo = Todo.objects.create(title=title)
+    
+    return render(request, 'partials/todo.html', {'todo': todo})
+```
+
+# ルーティング設定
+
+`backend/urls.py`
+
+```py
+from django.contrib import admin
+from django.urls import path
+
+from todo.views import delete_todo, todos, add_todo, update_todo
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('', todos, name='todo'),
+    path('add-todo/', add_todo, name='add_todo'),
+    path('delete/<int:pk>/', delete_todo, name='delete_todo'),
+    path('update/<int:pk>/', update_todo, name='update_todo'),
+]
+```
+
+**タスク削除やタスク編集の場合は、それらの処理を行うタスクを指定するために、`<int:pk>`でタスクを指定する。**
+
 # 開発環境
 
 * Django 4.0
